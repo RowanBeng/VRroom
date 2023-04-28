@@ -1,35 +1,34 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Clock : MonoBehaviour
+public class Clock : MonoBehaviour 
 {
-    public GameObject secondHand;
-    public GameObject minuteHand;
+
+    Quaternion hourRotation;
+    Quaternion minuteRotation;
+    Quaternion secondRotation;
+
     public GameObject hourHand;
-    string oldSeconds;
+    public GameObject minuteHand;
+    public GameObject secondHand; 
 
-    // Update is called once per frame
-    void Update()
+    DateTime currentTime;
+
+    private void Update()
     {
-        string seconds = System.DateTime.Now.ToString("ss");
 
-        if (seconds != oldSeconds) {
-            UpdateTimer();
-        }
-        oldSeconds = seconds;
-    }
-    void UpdateTimer()
-    {
-        int secondsInt = int.Parse(System.DateTime.UtcNow.ToString("ss"));
-        int minutesInt = int.Parse(System.DateTime.UtcNow.ToString("mm"));
-        int hoursInt = int.Parse(System.DateTime.UtcNow.ToLocalTime().ToString("hh"));
-        print(hoursInt + " : " + minutesInt + " : " + secondsInt);
+        currentTime = DateTime.Now;
 
-        iTween.RotateTo(secondHand, iTween.Hash("x", secondsInt * 6 * -1, "time", 1, "easetype", "easeOutQuint"));
-        iTween.RotateTo(minuteHand, iTween.Hash("x", minutesInt * 6 * -1, "time", 1, "easetype", "easeOutElastic"));
-        float hourDistance = (float)(minutesInt) / 60f;
-        iTween.RotateTo(hourHand, iTween.Hash("x", (hoursInt + hourDistance) * 360 / 12 * -1, "time", 1, "easetype", "easeOutQuint"));
-      
+        hourRotation = Quaternion.Euler( 90 + ( currentTime.Hour / 12f ) * 360f, -90f, -90f );
+        hourHand.transform.rotation = hourRotation;
+
+        minuteRotation = Quaternion.Euler( 90 + ( currentTime.Minute / 60f ) * 360f, -90f, -90f );
+        minuteHand.transform.rotation = minuteRotation;
+
+        secondRotation = Quaternion.Euler( 90 + ( currentTime.Second / 60f ) * 360f, -90f, -90f );
+        secondHand.transform.rotation = secondRotation;
     }
+
 }
